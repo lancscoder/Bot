@@ -12,6 +12,12 @@ namespace BotApi.Tests
         }
 
         [Fact]
+        public void Test1_1()
+        {
+            Assert.True(true);
+        }
+
+        [Fact]
         public void Test2()
         {
             Assert.True(false);
