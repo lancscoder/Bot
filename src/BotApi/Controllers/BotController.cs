@@ -5,18 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BotApi.Extensions;
+using BotApi.Models;
 
 namespace BotApi.Controllers
 {
+
     [Route("api/bot")]
     public class BotController : Controller
     {
-        private const string Rock = "ROCK";
-        private const string Paper = "PAPER";
-        private const string Scissor = "SCISSOR";
-        private const string Dynamite = "DYNAMITE";
-        private const string Waterbomb = "WATERBOMB";
-
         private static string _opponentName;
         private static string _lastOpponentsMove;
         private static int _pointstoWin;
@@ -49,7 +45,7 @@ namespace BotApi.Controllers
         {
             var move = GenerateMove();
 
-            if (move == Dynamite)
+            if (move == Moves.Dynamite)
             {
                 _dynamite--;
             }
@@ -71,7 +67,7 @@ namespace BotApi.Controllers
             _lastOpponentsMove = lastOpponentsMove;
             _opponentMoves.Add(lastOpponentsMove);
 
-            if (lastOpponentsMove == Dynamite)
+            if (lastOpponentsMove == Moves.Dynamite)
             {
                 _opponentsRemainingDynamite--;
             }
@@ -88,16 +84,16 @@ namespace BotApi.Controllers
                 return optimalMove;
             }
 
-            var availablemoves = new List<string> { Rock, Paper, Scissor };
+            var availablemoves = new List<string> { Moves.Rock, Moves.Paper, Moves.Scissor };
             if (_dynamite > 0)
             {
-                availablemoves.Add(Dynamite);
+                availablemoves.Add(Moves.Dynamite);
                 if (_remainingRounds / _dynamite <= 2)
-                    availablemoves.Add(Dynamite);
+                    availablemoves.Add(Moves.Dynamite);
                 if (_remainingRounds / _dynamite <= 3)
-                    availablemoves.Add(Dynamite);
+                    availablemoves.Add(Moves.Dynamite);
                 if (_remainingRounds / _dynamite <= 4)
-                    availablemoves.Add(Dynamite);
+                    availablemoves.Add(Moves.Dynamite);
             }
 
             int rnd = _random.Next(availablemoves.Count);
@@ -145,14 +141,14 @@ namespace BotApi.Controllers
         {
             switch (move)
             {
-                case Rock:
-                    return Paper;
-                case Paper:
-                    return Scissor;
-                case Scissor:
-                    return Rock;
-                case Dynamite:
-                    return _opponentsRemainingDynamite > 0 ? Waterbomb : null;
+                case Moves.Rock:
+                    return Moves.Paper;
+                case Moves.Paper:
+                    return Moves.Scissor;
+                case Moves.Scissor:
+                    return Moves.Rock;
+                case Moves.Dynamite:
+                    return _opponentsRemainingDynamite > 0 ? Moves.Waterbomb : null;
                 default:
                     return null;
             }
