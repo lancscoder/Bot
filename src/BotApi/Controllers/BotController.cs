@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BotApi.Extensions;
+using BotApi.Helpers;
 using BotApi.Models;
 
 namespace BotApi.Controllers
@@ -43,7 +43,7 @@ namespace BotApi.Controllers
         [HttpGet("move")]
         public Task<string> Move()
         {
-            var move = GenerateMove();
+            var move = MoveHelper.GenerateMove(_ourMoves, _opponentMoves, _dynamite, _opponentsRemainingDynamite, _remainingRounds, _random);
 
             if (move == Moves.Dynamite)
             {
@@ -73,85 +73,6 @@ namespace BotApi.Controllers
             }
 
             return Task.FromResult("Move");
-        }
-
-        internal static string GenerateMove()
-        {
-            var optimalMove = GetOptimalMove();
-
-            if (!String.IsNullOrEmpty(optimalMove))
-            {
-                return optimalMove;
-            }
-
-            var availablemoves = new List<string> { Moves.Rock, Moves.Paper, Moves.Scissor };
-            if (_dynamite > 0)
-            {
-                availablemoves.Add(Moves.Dynamite);
-                if (_remainingRounds / _dynamite <= 2)
-                    availablemoves.Add(Moves.Dynamite);
-                if (_remainingRounds / _dynamite <= 3)
-                    availablemoves.Add(Moves.Dynamite);
-                if (_remainingRounds / _dynamite <= 4)
-                    availablemoves.Add(Moves.Dynamite);
-            }
-
-            int rnd = _random.Next(availablemoves.Count);
-            var move = availablemoves[rnd];
-
-            return move;
-        }
-
-        internal static string GetOptimalMove()
-        {
-            if (_ourMoves.Count < 5)
-            {
-                return null; //no optimal strategy to identify yet
-            }
-
-            // opp does same move
-            var last4MovesTheSame = _opponentMoves.TakeLast(4).Distinct().Count() == 1;
-            if (last4MovesTheSame)
-            {
-                var lastMove = _opponentMoves.Last();
-
-                return GetWinningMove(lastMove);
-            }
-
-            var mostlyTheLastMove = _opponentMoves.TakeLast(20).Count(m => m == _opponentMoves.Last()) > 13;
-            if (mostlyTheLastMove)
-            {
-                var lastMove = _opponentMoves.Last();
-
-                return GetWinningMove(lastMove);
-            }
-
-            var mostlyTheSecondLastMove = _opponentMoves.TakeLast(20).Count(m => m == _opponentMoves.TakeLast(2).First()) > 13;
-            if (mostlyTheSecondLastMove)
-            {
-                var secondLastMove = _opponentMoves.TakeLast(2).First();
-
-                return GetWinningMove(secondLastMove);
-            }
-
-            return null;
-        }
-
-        internal static string GetWinningMove(string move)
-        {
-            switch (move)
-            {
-                case Moves.Rock:
-                    return Moves.Paper;
-                case Moves.Paper:
-                    return Moves.Scissor;
-                case Moves.Scissor:
-                    return Moves.Rock;
-                case Moves.Dynamite:
-                    return _opponentsRemainingDynamite > 0 ? Moves.Waterbomb : null;
-                default:
-                    return null;
-            }
         }
     }
 }
