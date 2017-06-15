@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using BotApi.Extensions;
 
 namespace BotApi.Controllers
 {
@@ -49,7 +50,9 @@ namespace BotApi.Controllers
             var move = GenerateMove();
 
             if (move == Dynamite)
+            {
                 _dynamite--;
+            }
 
             _ourMoves.Add(move);
             _remainingRounds--;
@@ -61,7 +64,7 @@ namespace BotApi.Controllers
         public Task<string> MovePost()
         {
             // TODO : Test
-           var lastOpponentsMove = new StreamReader(this.Request.Body).ReadToEnd();
+            var lastOpponentsMove = new StreamReader(this.Request.Body).ReadToEnd();
 
             lastOpponentsMove = lastOpponentsMove.ToUpper();
 
@@ -69,7 +72,9 @@ namespace BotApi.Controllers
             _opponentMoves.Add(lastOpponentsMove);
 
             if (lastOpponentsMove == Dynamite)
+            {
                 _opponentsRemainingDynamite--;
+            }
 
             return Task.FromResult("Move");
         }
@@ -79,7 +84,9 @@ namespace BotApi.Controllers
             var optimalMove = GetOptimalMove();
 
             if (!String.IsNullOrEmpty(optimalMove))
+            {
                 return optimalMove;
+            }
 
             var availablemoves = new List<string> { Rock, Paper, Scissor };
             if (_dynamite > 0)
@@ -93,7 +100,6 @@ namespace BotApi.Controllers
                     availablemoves.Add(Dynamite);
             }
 
-
             int rnd = _random.Next(availablemoves.Count);
             var move = availablemoves[rnd];
 
@@ -103,7 +109,9 @@ namespace BotApi.Controllers
         internal static string GetOptimalMove()
         {
             if (_ourMoves.Count < 5)
+            {
                 return null; //no optimal strategy to identify yet
+            }
 
             // opp does same move
             var last4MovesTheSame = _opponentMoves.TakeLast(4).Distinct().Count() == 1;
@@ -148,17 +156,6 @@ namespace BotApi.Controllers
                 default:
                     return null;
             }
-        }
-    }
-
-
-
-    public static class MiscExtensions
-    {
-        // Ex: collection.TakeLast(5);
-        public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int N)
-        {
-            return source.Skip(Math.Max(0, source.Count() - N));
         }
     }
 }
