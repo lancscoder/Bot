@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,9 @@ namespace BotApi.Controllers
     {
         public Task<string> Get()
         {
-            return Task.FromResult("Version 1");
+            var version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyVersionAttribute>().Version;
+
+            return Task.FromResult(version);
         }
     }
 }
