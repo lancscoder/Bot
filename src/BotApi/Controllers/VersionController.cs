@@ -9,7 +9,14 @@ namespace BotApi.Controllers
     {
         public Task<string> Get()
         {
-            var version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyVersionAttribute>().Version;
+            var versionAttribute = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
+            if (versionAttribute == null)
+            {
+                return Task.FromResult("Unknown");
+            }
+
+            var version = versionAttribute.InformationalVersion;
 
             return Task.FromResult(version);
         }
