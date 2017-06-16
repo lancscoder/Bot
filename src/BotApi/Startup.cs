@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BotApi
 {
@@ -36,6 +37,7 @@ namespace BotApi
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            //loggerFactory.AddAzureWebAppDiagnostics();
 
             app.UseMvc();
         }
