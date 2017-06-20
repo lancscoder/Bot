@@ -7,6 +7,5 @@ namespace BotApi.Models
         public const string Scissor = "SCISSOR";
         public const string Dynamite = "DYNAMITE";
         public const string Waterbomb = "WATERBOMB";
-
     }
 }

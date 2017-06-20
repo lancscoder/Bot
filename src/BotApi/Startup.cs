@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BotApi.Logging;
+using BotApi.Repository;
+using BotApi.Models;
 //using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BotApi
@@ -20,6 +22,7 @@ namespace BotApi
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
@@ -30,6 +33,20 @@ namespace BotApi
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddOptions();
+
+            // TODO : Get working
+            // services.Configure<LoggingOptions>(_ =>
+            // {
+            //    _.Url = Configuration.GetValue<string>("RPS_DB_URL");
+            //    _.Key = Configuration.GetValue<string>("RPS_KEY");
+            //    _.Environment = Configuration.GetValue<string>("RPS_ENVRIONMENT");
+            // });
+
+            services.AddSingleton<IConfiguration>(Configuration);
+
+            services.AddTransient<IRepository<LoggingItem>, LoggingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

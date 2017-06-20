@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using BotApi.Extensions;
 using BotApi.Helpers;
 using BotApi.Models;
+using BotApi.Repository;
 
 namespace BotApi.Controllers
 {
-
     [Route("api/bot")]
     public class BotController : Controller
     {
@@ -17,7 +17,9 @@ namespace BotApi.Controllers
         private static string _lastOpponentsMove;
         private static int _pointstoWin;
         private static int _remainingRounds;
-        private static int _dynamite;
+
+        private static int _originalDynamite;
+        private static int _ourRemainingDynamite;
         private static int _opponentsRemainingDynamite;
 
         private static List<string> _opponentMoves = new List<string>();
@@ -25,29 +27,52 @@ namespace BotApi.Controllers
 
         private static Random _random = new Random();
 
+        private readonly IRepository<LoggingItem> _repository;
+
+        public BotController(IRepository<LoggingItem> repository)
+        {
+            _repository = repository;
+        }
 
         [HttpGet("start")]
         public Task<string> Start(int dynamiteCount, int pointstoWin, int maxRounds, string opponentName)
         {
+            // TODO : Log here....
+            if (!String.IsNullOrWhiteSpace(_opponentName))
+            {
+                // Start of a new game so log the other stuff
+                // TODO  Makei if fire n forget....
+                var loggingItem = new LoggingItem()
+                {
+                    Time = DateTime.Now,
+                    Content = "Fooooo " + DateTime.Now.ToString()
+                };
+
+                var document = _repository.CreateDcumentAsync(loggingItem).Result;
+            }
+
             _opponentName = opponentName;
             _pointstoWin = pointstoWin;
             _remainingRounds = maxRounds;
-            _dynamite = dynamiteCount;
+
+            _originalDynamite = dynamiteCount;
+            _ourRemainingDynamite = dynamiteCount;
             _opponentsRemainingDynamite = dynamiteCount;
+
             _opponentMoves = new List<string>();
             _ourMoves = new List<string>();
 
-            return Task.FromResult("Blah 5");
+            return Task.FromResult("Start");
         }
 
         [HttpGet("move")]
         public Task<string> Move()
         {
-            var move = MoveHelper.GenerateMove(_ourMoves, _opponentMoves, _dynamite, _opponentsRemainingDynamite, _remainingRounds, _random);
+            var move = MoveHelper.GenerateMove(_ourMoves, _opponentMoves, _ourRemainingDynamite, _opponentsRemainingDynamite, _remainingRounds, _random);
 
             if (move == Moves.Dynamite)
             {
-                _dynamite--;
+                _ourRemainingDynamite--;
             }
 
             _ourMoves.Add(move);
