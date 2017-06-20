@@ -24,7 +24,7 @@ namespace BotApi.Repository
 
         public async Task<Document> CreateDcumentAsync(LoggingItem model)
         {
-            model.Content += _environment;
+            model.Environment = _environment;
             return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("RpsLogging", "Logs"), model);
         }
     }
