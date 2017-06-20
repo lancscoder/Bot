@@ -14,6 +14,7 @@ namespace BotApi.Repository
 
         public LoggingRepository(IConfiguration configuration)
         {
+            // TODO  Pass this in as options somehow....
             var url = configuration.GetValue<string>("RPS_DB_URL");
             var key = configuration.GetValue<string>("RPS_KEY");
             _environment = configuration.GetValue<string>("RPS_ENVRIONMENT");
