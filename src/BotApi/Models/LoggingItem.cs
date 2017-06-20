@@ -15,6 +15,7 @@ namespace BotApi.Models
         public string[] OurMoves { get; set; }
         public string[] OpponentMoves { get; set; }
         public string Environment { get; set; }
+        public DateTime LogTime => DateTime.Now;
 
         public string Content { get; set; }
     }
