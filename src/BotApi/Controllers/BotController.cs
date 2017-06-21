@@ -34,7 +34,7 @@ namespace BotApi.Controllers
             _repository = repository;
         }
 
-        [HttpGet("start")]
+        [HttpGet("start")] // TODO : Need to be a post....
         public Task<string> Start(int dynamiteCount, int pointstoWin, int maxRounds, string opponentName)
         {
             // TODO : Log here....
@@ -62,6 +62,7 @@ namespace BotApi.Controllers
             _opponentMoves = new List<string>();
             _ourMoves = new List<string>();
 
+            // Should return the uri....
             return Task.FromResult("Start");
         }
 
@@ -78,6 +79,7 @@ namespace BotApi.Controllers
             _ourMoves.Add(move);
             _remainingRounds--;
 
+            // TODO: Return in upper case...
             return Task.FromResult(move);
         }
 
@@ -97,6 +99,8 @@ namespace BotApi.Controllers
                 _opponentsRemainingDynamite--;
             }
 
+
+            // TODO : Return url....
             return Task.FromResult("Move");
         }
     }
