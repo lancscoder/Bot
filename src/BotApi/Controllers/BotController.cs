@@ -7,10 +7,12 @@ using BotApi.Extensions;
 using BotApi.Helpers;
 using BotApi.Models;
 using BotApi.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace BotApi.Controllers
 {
     [Route("api/bot")]
+    [Route("/")]
     public class BotController : Controller
     {
         private static string _opponentName;
@@ -28,15 +30,47 @@ namespace BotApi.Controllers
         private static Random _random = new Random();
 
         private readonly IRepository<LoggingItem> _repository;
+        private readonly ILogger<BotController> _logger;
 
-        public BotController(IRepository<LoggingItem> repository)
+        public BotController(IRepository<LoggingItem> repository, ILogger<BotController> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
-        [HttpGet("start")] // TODO : Need to be a post....
-        public Task<string> Start(int dynamiteCount, int pointstoWin, int maxRounds, string opponentName)
+        [HttpPost("start")]
+        public Task<string> PostStart()
         {
+            int dynamiteCount = 0;
+            int pointsToWin = 0;
+            int maxRounds = 0;
+            string opponentName = "";
+
+            var options = new StreamReader(this.Request.Body).ReadToEnd();
+
+            foreach (var option in options.Split(new[] { '&' }))
+            {
+                var parameters = option.Split(new[] { '=' });
+
+                switch (parameters[0].ToLower())
+                {
+                    case "dynamitecount":
+                        dynamiteCount = int.Parse(parameters[1]);
+                        break;
+                    case "pointstowin":
+                        pointsToWin = int.Parse(parameters[1]);
+                        break;
+                    case "maxrounds":
+                        maxRounds = int.Parse(parameters[1]);
+                        break;
+                    case "opponentname":
+                        opponentName = parameters[1];
+                        break;
+                }
+            }
+
+            _logger.LogInformation("POST START: Dynamite Count: {dynamiteCount}, Pints to Win; {pointsToWin}, Max Rounds: {maxRounds}, Opponent Name: {opponentName}.", dynamiteCount, pointsToWin, maxRounds, opponentName);
+
             // TODO : Log here....
             if (!String.IsNullOrWhiteSpace(_opponentName))
             {
@@ -52,7 +86,7 @@ namespace BotApi.Controllers
             }
 
             _opponentName = opponentName;
-            _pointstoWin = pointstoWin;
+            _pointstoWin = pointsToWin;
             _remainingRounds = maxRounds;
 
             _originalDynamite = dynamiteCount;
@@ -62,13 +96,14 @@ namespace BotApi.Controllers
             _opponentMoves = new List<string>();
             _ourMoves = new List<string>();
 
-            // Should return the uri....
-            return Task.FromResult("Start");
+            return Task.FromResult(HttpContext.Request.Path.Value);
         }
 
         [HttpGet("move")]
-        public Task<string> Move()
+        public Task<string> GetMove()
         {
+            _logger.LogInformation("GET MOVE");
+
             var move = MoveHelper.GenerateMove(_ourMoves, _opponentMoves, _ourRemainingDynamite, _opponentsRemainingDynamite, _remainingRounds, _random);
 
             if (move == Moves.Dynamite)
@@ -79,15 +114,17 @@ namespace BotApi.Controllers
             _ourMoves.Add(move);
             _remainingRounds--;
 
-            // TODO: Return in upper case...
+            _logger.LogInformation("Our Move: {move}", move);
+
             return Task.FromResult(move);
         }
 
         [HttpPost("move")]
-        public Task<string> MovePost()
+        public Task<string> PostMove()
         {
-            // TODO : Test
             var lastOpponentsMove = new StreamReader(this.Request.Body).ReadToEnd();
+
+            _logger.LogInformation("POST MOVE: {lastOpponentsMove}", lastOpponentsMove);
 
             lastOpponentsMove = lastOpponentsMove.ToUpper();
 
@@ -99,9 +136,9 @@ namespace BotApi.Controllers
                 _opponentsRemainingDynamite--;
             }
 
+            _logger.LogInformation("Their move: {lastOpponentsMove}", lastOpponentsMove);
 
-            // TODO : Return url....
-            return Task.FromResult("Move");
+            return Task.FromResult(HttpContext.Request.Path.Value);
         }
     }
 }
