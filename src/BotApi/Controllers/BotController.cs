@@ -71,7 +71,6 @@ namespace BotApi.Controllers
 
             _logger.LogInformation("POST START: Dynamite Count: {dynamiteCount}, Pints to Win; {pointsToWin}, Max Rounds: {maxRounds}, Opponent Name: {opponentName}.", dynamiteCount, pointsToWin, maxRounds, opponentName);
 
-            // TODO : Log here....
             if (!String.IsNullOrWhiteSpace(_opponentName))
             {
                 // Start of a new game so log the other stuff

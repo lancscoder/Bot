@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using BotApi.Logging;
 using BotApi.Repository;
 using BotApi.Models;
 //using Microsoft.Extensions.Logging.Abstractions;
@@ -54,7 +53,6 @@ namespace BotApi
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            //loggerFactory.AddRps();
 
             app.UseMvc();
         }
