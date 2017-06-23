@@ -50,27 +50,36 @@ namespace BotApi.Controllers
             int maxRounds = 0;
             string opponentName = "";
 
-            var options = new StreamReader(this.Request.Body).ReadToEnd();
-
-            foreach (var option in options.Split(new[] { '&' }))
+            try
             {
-                var parameters = option.Split(new[] { '=' });
+                var options = new StreamReader(this.Request.Body).ReadToEnd();
 
-                switch (parameters[0].ToLower())
+                foreach (var option in options.Split(new[] { '&' }))
                 {
-                    case "dynamitecount":
-                        dynamiteCount = int.Parse(parameters[1]);
-                        break;
-                    case "pointstowin":
-                        pointsToWin = int.Parse(parameters[1]);
-                        break;
-                    case "maxrounds":
-                        maxRounds = int.Parse(parameters[1]);
-                        break;
-                    case "opponentname":
-                        opponentName = parameters[1];
-                        break;
+                    var parameters = option.Split(new[] { '=' });
+
+                    if (parameters.Length == 2)
+                    {
+                        switch (parameters[0].ToLower())
+                        {
+                            case "dynamitecount":
+                                int.TryParse(parameters[1], out dynamiteCount);
+                                break;
+                            case "pointstowin":
+                                int.TryParse(parameters[1], out pointsToWin);
+                                break;
+                            case "maxrounds":
+                                int.TryParse(parameters[1], out maxRounds);
+                                break;
+                            case "opponentname":
+                                opponentName = parameters[1];
+                                break;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
             }
 
             try
