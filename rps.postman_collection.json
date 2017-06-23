@@ -5,7 +5,10 @@
 	"order": [
 		"7e46942d-d58b-d002-c372-61a68ef22403",
 		"6ab21406-8211-c945-d28b-f78ad03f86e1",
-		"ab19c644-8f25-d648-749b-f845c3d7f3de"
+		"ab19c644-8f25-d648-749b-f845c3d7f3de",
+		"7dbf7904-6944-4e01-bb1a-1efcded43a86",
+		"38866b27-4849-5bdb-e41f-04f414279d34",
+		"e42726fa-e7c1-eefb-bf62-94504fcc924b"
 	],
 	"folders": [],
 	"timestamp": 1498040066987,
@@ -13,6 +16,25 @@
 	"public": false,
 	"published": false,
 	"requests": [
+		{
+			"id": "38866b27-4849-5bdb-e41f-04f414279d34",
+			"headers": "",
+			"url": "http://localhost:5000/move",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1498134681085,
+			"name": "Players Move New",
+			"description": "",
+			"collectionId": "4f9a50fd-26df-2b87-0da0-7a211834d228",
+			"responses": []
+		},
 		{
 			"id": "6ab21406-8211-c945-d28b-f78ad03f86e1",
 			"headers": "",
@@ -32,6 +54,25 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {}
+		},
+		{
+			"id": "7dbf7904-6944-4e01-bb1a-1efcded43a86",
+			"headers": "",
+			"url": "http://localhost:5000/start",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1498134698134,
+			"name": "Start New",
+			"description": "",
+			"collectionId": "4f9a50fd-26df-2b87-0da0-7a211834d228",
+			"responses": [],
+			"rawModeData": "dynamiteCount=5&pointstoWin=10&maxRounds=100&opponentName=Blah"
 		},
 		{
 			"id": "7e46942d-d58b-d002-c372-61a68ef22403",
@@ -71,6 +112,26 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
+			"rawModeData": "ROCK"
+		},
+		{
+			"id": "e42726fa-e7c1-eefb-bf62-94504fcc924b",
+			"headers": "",
+			"url": "http://localhost:5000/move",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1498134785425,
+			"name": "Opponents Move New",
+			"description": "",
+			"collectionId": "4f9a50fd-26df-2b87-0da0-7a211834d228",
+			"responses": [],
 			"rawModeData": "ROCK"
 		}
 	]
