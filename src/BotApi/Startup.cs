@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BotApi.Repository;
 using BotApi.Models;
-//using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BotApi
 {

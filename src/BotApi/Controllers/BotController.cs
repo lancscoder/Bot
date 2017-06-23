@@ -8,6 +8,7 @@ using BotApi.Helpers;
 using BotApi.Models;
 using BotApi.Repository;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace BotApi.Controllers
 {
@@ -18,6 +19,9 @@ namespace BotApi.Controllers
         private static string _opponentName;
         private static string _lastOpponentsMove;
         private static int _pointstoWin;
+
+
+        private static int _numberOfRounds;
         private static int _remainingRounds;
 
         private static int _originalDynamite;
@@ -78,7 +82,18 @@ namespace BotApi.Controllers
                 var loggingItem = new LoggingItem()
                 {
                     Time = DateTime.Now,
-                    Content = "Fooooo " + DateTime.Now.ToString()
+                    OpponentName = _opponentName,
+                    DynamiteCount = _originalDynamite,
+                    PointsToWin = _pointstoWin,
+                    MaxRounds = _numberOfRounds,
+                    OurMoves = _ourMoves.ToArray(),
+                    OpponentMoves = _opponentMoves.ToArray(),
+                    Moves = _ourMoves.Select((m, i) => new LoggingMove()
+                    {
+                        Round = i + 1,
+                        OurMove = m,
+                        TheirMove = (_opponentMoves.Count() - 1) < i ? "N/A" : _opponentMoves[i]
+                    }).ToArray()
                 };
 
                 var document = _repository.CreateDcumentAsync(loggingItem).Result;
@@ -86,6 +101,8 @@ namespace BotApi.Controllers
 
             _opponentName = opponentName;
             _pointstoWin = pointsToWin;
+
+            _numberOfRounds = maxRounds;
             _remainingRounds = maxRounds;
 
             _originalDynamite = dynamiteCount;
