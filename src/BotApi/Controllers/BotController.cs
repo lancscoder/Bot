@@ -73,30 +73,37 @@ namespace BotApi.Controllers
                 }
             }
 
-            _logger.LogInformation("POST START: Dynamite Count: {dynamiteCount}, Pints to Win; {pointsToWin}, Max Rounds: {maxRounds}, Opponent Name: {opponentName}.", dynamiteCount, pointsToWin, maxRounds, opponentName);
-
-            if (!String.IsNullOrWhiteSpace(_opponentName))
+            try
             {
-                // Start of a new game so log the other stuff
-                // TODO  Makei if fire n forget....
-                var loggingItem = new LoggingItem()
-                {
-                    Time = DateTime.Now,
-                    OpponentName = _opponentName,
-                    DynamiteCount = _originalDynamite,
-                    PointsToWin = _pointstoWin,
-                    MaxRounds = _numberOfRounds,
-                    OurMoves = _ourMoves.ToArray(),
-                    OpponentMoves = _opponentMoves.ToArray(),
-                    Moves = _ourMoves.Select((m, i) => new LoggingMove()
-                    {
-                        Round = i + 1,
-                        OurMove = m,
-                        TheirMove = (_opponentMoves.Count() - 1) < i ? "N/A" : _opponentMoves[i]
-                    }).ToArray()
-                };
+                _logger.LogInformation("POST START: Dynamite Count: {dynamiteCount}, Pints to Win; {pointsToWin}, Max Rounds: {maxRounds}, Opponent Name: {opponentName}.", dynamiteCount, pointsToWin, maxRounds, opponentName);
 
-                var document = _repository.CreateDcumentAsync(loggingItem).Result;
+                if (!String.IsNullOrWhiteSpace(_opponentName))
+                {
+                    // Start of a new game so log the other stuff
+                    // TODO  Makei if fire n forget....
+                    var loggingItem = new LoggingItem()
+                    {
+                        Time = DateTime.Now,
+                        OpponentName = _opponentName,
+                        DynamiteCount = _originalDynamite,
+                        PointsToWin = _pointstoWin,
+                        MaxRounds = _numberOfRounds,
+                        OurMoves = _ourMoves.ToArray(),
+                        OpponentMoves = _opponentMoves.ToArray(),
+                        Moves = _ourMoves.Select((m, i) => new LoggingMove()
+                        {
+                            Round = i + 1,
+                            OurMove = m,
+                            TheirMove = (_opponentMoves.Count() - 1) < i ? "N/A" : _opponentMoves[i]
+                        }).ToArray()
+                    };
+
+                    var document = _repository.CreateDcumentAsync(loggingItem).Result;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Try logging if fails dont care.
             }
 
             _opponentName = opponentName;
